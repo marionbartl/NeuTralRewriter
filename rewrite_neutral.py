@@ -37,7 +37,8 @@ class NeutralRewriter(object):
         """Initalizes stanza either for tokenization or not."""
         return stanza.Pipeline(
             lang=language, processors='tokenize,mwt,pos,lemma,depparse',
-            tokenize_pretokenized='true' if not parse else 'false')
+            tokenize_pretokenized='true' if not parse else 'false', use_gpu=True
+            )
 
     @staticmethod
     def dict_replace(sent, d):
@@ -289,9 +290,10 @@ class NeutralRewriter(object):
                 sent_map[i] = self.match_case(word, 'them')
 
         new_sent = " ".join(sent_map)
+        original_sent = ' '.join([word.text for word in sent.words])
         if self.advanced:
             new_sent = self._genderneutral(new_sent)
-        return self._correctgram(new_sent)
+        return self._correctgram(new_sent), original_sent
 
     def process_document(self, document):
         """Splits document in sentences and rewrites those to gender neutral.
