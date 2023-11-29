@@ -293,7 +293,17 @@ class NeutralRewriter(object):
         original_sent = ' '.join([word.text for word in sent.words])
         if self.advanced:
             new_sent = self._genderneutral(new_sent)
-        return self._correctgram(new_sent), original_sent
+        
+        try:
+            gram_correct_sent_n = self._correctgram(new_sent)
+            gram_correct_sent_o = self._correctgram(original_sent)
+
+        except:
+            print('Error in grammar correction: {0}'.format(new_sent))
+            gram_correct_sent_n = new_sent
+            gram_correct_sent_o = original_sent
+
+        return gram_correct_sent_n, gram_correct_sent_o
 
     def process_document(self, document):
         """Splits document in sentences and rewrites those to gender neutral.
